@@ -12,24 +12,6 @@
 #define PI 3.14159265 
 using namespace std;
 
-int printInBinary(const unsigned char val)
-{
-	int mas[32];
-	for (int i = 7; i >= 0; --i)
-		if (val & (1 << i))
-		{
-			cout << "1";
-			mas[i] = 1;
-		}
-		else
-		{
-			cout << "0";
-			mas[i] = 0;
-		}
-	return *mas;
-}
-
-
 int main(int, const char* const [])
 {
 	std::ofstream sinus1("SIN1.txt", std::ios_base::out);
@@ -150,7 +132,6 @@ int main(int, const char* const [])
 			ACHtlg << ACHlg[i] << "		" << i << "\n";
 
 			power = power + ((Sum1_SN * Sum1_SN + Sum2_SN * Sum2_SN) / (CountTest)); // мощность
-			//power = power + ((real_SN * real_SN + mnim_SN * mnim_SN) / (CountTest)); // мощность
 		}
 	std::cout << std::endl << " Power signal = " << power << std::endl;
 
@@ -191,20 +172,8 @@ int main(int, const char* const [])
 		real_SN = Noise[i] * cos(param_SN);
 		mnim_SN = Noise[i] * sin(param_SN);
 
-		//mas_workN[i] = 20 * log10(sqrt(Sum1_SNN * Sum1_SNN + Sum2_SNN * Sum2_SNN)) / (CountTest / 2); // Работает для шума
-		//mas_workN[i] = 20 * log10(sqrt(mas_intN[i])) / CountTest; // Работает для шума
-		//mas_workN[i] = 20 * log10(sqrt((Sum1_SNN * Sum1_SNN + Sum2_SNN * Sum2_SNN))) / CountTest; // Работает для шума
-
-
 		mas_workN[i] = ((Sum1_SNN * Sum1_SNN + Sum2_SNN * Sum2_SNN));
 		mas_workN[i] = 20 * log10(sqrt(mas_workN[i])) / CountTest;
-
-		//mas_workN[i] = ((real_SN * real_SN + mnim_SN * mnim_SN));
-		//mas_workN[i] = 20 * log10(sqrt(mas_workN[i])) / CountTest;
-
-		//mas_workN[i] = 20 * log10(sqrt(Noise[i]));
-
-		//dftnoise << mas_workN[i] << "		" << log10(i) << "\n";
 		dftnoise << mas_workN[i] << "		" << i << "\n";
 	}
 
@@ -245,7 +214,6 @@ int main(int, const char* const [])
 		zn1 = filtrn[i];
 		exitn[i] = sumn1;
 		flagn1 = 1;
-		//std::cout << "Signal[i]" << "\tZ1" << "\tZ2" << "\tSum1" << "\tSum2" << "\tZ3" << "\tZ4" << endl << Signal[i] << "\t" << z1 << "\t" << z2 << "\t" << sum1 << "\t" << z3 + sum1 + sum2 << "\t" << z3 + sum1 + sum2 << "\t" << sum2 << endl << endl;
 	}
 	std::cout << std::endl;
 
@@ -308,7 +276,6 @@ int main(int, const char* const [])
 		ACHtlgFiltr << ACHlgFiltr[i] << "		" << i << "\n";
 
 		power = power + ((Sum1_SN_F * Sum1_SN_F + Sum2_SN_F * Sum2_SN_F) / (CountTest)); // мощность
-		//power = power + ((real_SN_F * real_SN_F + mnim_SN_F * mnim_SN_F) / (CountTest)); // мощность
 	}
 	std::cout << std::endl << " Power signal after filtr111 = " << power << std::endl;
 
@@ -342,7 +309,6 @@ int main(int, const char* const [])
 			Sum1_SN_FN = Sum1_SN_FN + real_SN_FN;
 			Sum2_SN_FN = Sum2_SN_FN - mnim_SN_FN;
 		}
-		//mas_work_FN[i] = 20*log10((Sum1_SN_FN * Sum1_SN_FN + Sum2_SN_FN * Sum2_SN_FN)) / (CountTest / 2); // Это хорошо для шума
 		mas_work_FN[i] = ((Sum1_SN_FN * Sum1_SN_FN + Sum2_SN_FN * Sum2_SN_FN));
 		mas_work_FN[i] = 20 * log10(sqrt(mas_work_FN[i])) / CountTest;
 
@@ -366,7 +332,6 @@ int main(int, const char* const [])
 			index = Signal[i];
 		}
 	}
-	//std::cout << "Max Amplitude = " << index << " ";
 
 	std::ofstream signal16("SIGNAL16.txt", std::ios_base::out);
 	float* Signal16 = new float[Count];
@@ -399,100 +364,6 @@ int main(int, const char* const [])
 
 
 
-	/*std::ofstream signal8("SIGNAL8.txt", std::ios_base::out);
-	float* Signal8 = new float[Count];
-	std::cout << std::endl << " Signal8 " << std::endl;
-	for (int i = 0; i < Count; i++)
-	{
-		//Signal[i] = Noise[i] + Signalsin1[i] + Signalsin2[i] + Signalsin3[i];
-		Signal8[i] = Signal[i] / index;
-		//Signal8[i] = Signal[i];
-		if (Signal8[i] >= 0)
-		{
-			Signal8[i] = Signal8[i] * (2 ^ 8) - 1;
-			Signal8[i] = Signal8[i] / (2 ^ 8);
-			Signal8[i] = Signal8[i] * (index);
-		}
-		else if (Signal8[i] < 0)
-		{
-			Signal8[i] = Signal8[i] * (2 ^ 8) - 1;
-			Signal8[i] = Signal8[i] / (2 ^ 8);
-			Signal8[i] = Signal8[i] * (index);
-		}
-		signal8 << Signal8[i] << "		" << i << "\n";
-	}*/
-
-	/*std::ofstream signal24("SIGNAL24.txt", std::ios_base::out);
-	float* Signal24 = new float[Count];
-	std::cout << std::endl << " Signal24 " << std::endl;
-	for (int i = 0; i < Count; i++)
-	{
-		//Signal[i] = Noise[i] + Signalsin1[i] + Signalsin2[i] + Signalsin3[i];
-		Signal24[i] = Signal[i] / index;
-		//Signal24[i] = Signal[i];
-		if (Signal24[i] >= 0)
-		{
-			Signal24[i] = Signal24[i] * (2 ^ 32) - 1;
-			Signal24[i] = Signal24[i] / (2 ^ 32);
-			Signal24[i] = Signal24[i] * (index);
-		}
-		else if (Signal24[i] < 0.0)
-		{
-			Signal24[i] = Signal24[i] * (2 ^ 32) - 1;
-			Signal24[i] = Signal24[i] / (2 ^ 32);
-			Signal24[i] = Signal24[i] * (index);
-		}
-		signal24 << Signal24[i] << "		" << i << "\n";
-	}*/
-
-	//std::cout << x<<16 << '\n';
-	/*float f = 1.0;
-	unsigned char* ucp =
-		reinterpret_cast<unsigned char*>(&f);
-
-	for (int i = sizeof(float) - 1; i >= 0; --i)
-	{
-		printInBinary(ucp[i]);
-	}*/
-
-
-
-	/*std::cout << '\n';
-	float f1 = 1.0;
-	int* ucp1 =
-		reinterpret_cast<int*>(&f1);
-
-	for (int i = sizeof(float) - 1; i >= 0; --i)
-	{
-		mas[i] = printInBinary(ucp1[i]);
-		//mas[i] = ucp1[i];
-		std::cout << ucp1[i] << " ";
-	}
-	std::cout << '\n';
-	for (int i = 16; i >= 0; i--)
-	{
-		//std::cout << mas[i] << " ";
-	}
-	std::cout << '\n';
-
-	// inspect memory from c[0] to c[sizeof f - 1]
-
-	/*for (int i = sizeof(x) - 1; i >= 0; i--)
-	{
-		std::cout << std::bitset<8>(reinterpret_cast<char*>(&x)[i]);
-		mas[i] = (reinterpret_cast<int*>(&x)[i]);
-	}
-	std::cout << '\n';
-	for (int i = 31; i >= 0; i--)
-	{
-		std::cout << mas[i] << " ";
-	}
-	std::cout << '\n';*/
-
-
-
-
-
 
 
 	///////////////////////////////    DFT Signal 8      \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -504,7 +375,6 @@ int main(int, const char* const [])
 	std::ofstream ACHt8("ACH8.txt", std::ios_base::out);
 	std::ofstream FCHtlg8("FCHLG8.txt", std::ios_base::out);
 	std::ofstream ACHtlg8("ACHLG8.txt", std::ios_base::out);
-
 
 	N_SN = CountTest;
 	real_SN = 0.0;
@@ -532,14 +402,6 @@ int main(int, const char* const [])
 				Sum1_SN = Sum1_SN + real_SN;
 				Sum2_SN = Sum2_SN - mnim_SN;
 			}
-
-			/*//mas_work[i] = ((Sum1_SN * Sum1_SN) / (CountTest / 2)); // Вроде работает
-			mas_work[i] = ((Sum1_SN * Sum1_SN + Sum2_SN * Sum2_SN) / (CountTest)); // Работает для синуосв
-			//mas_work[i] = ((Sum1_SN * Sum1_SN + Sum2_SN * Sum2_SN) / (CountTest / 2)); // Работает для синуосв
-
-			DFT_SN[sr] = mas_work[i];
-			Signal8_d << DFT_SN[sr] << "		" << sr << "\n";
-			sr++;*/
 
 			param_SN = 2.0 * PI * i / N_SN;
 			real_SN = Signal8[i] * cos(param_SN);
@@ -572,17 +434,11 @@ int main(int, const char* const [])
 	for (int i = 0; i < Count + 2; i++)
 	{
 		filtr[i] = 0.99 * Signal8[i];
-		//z4 = z3;
-		//z3 = sum2;
-		//sum2 = sum1 + z3 * 1.883 + z4 * (-0.98);
 		sum1 = filtr[i] + z1 * (-1.902) + z2 * 1;
 		z2 = z1;
 		z1 = filtr[i];
-
-		//exit[i] = sum2;
 		exit[i] = sum1;
 		flag1 = 1;
-		//std::cout << "Signal[i]" << "\tZ1" << "\tZ2" << "\tSum1" << "\tSum2" << "\tZ3" << "\tZ4" << endl << Signal[i] << "\t" << z1 << "\t" << z2 << "\t" << sum1 << "\t" << z3 + sum1 + sum2 << "\t" << z3 + sum1 + sum2 << "\t" << sum2 << endl << endl;
 	}
 	std::cout << std::endl;
 
@@ -622,17 +478,6 @@ int main(int, const char* const [])
 			Sum1_SN_F = Sum1_SN_F + real_SN_F;
 			Sum2_SN_F = Sum2_SN_F - mnim_SN_F;
 		}
-
-		/*//mas_work_F[i] = ((Sum1_SN_F * Sum1_SN_F) / (CountTest / 2)); // Вроде работает для синусов
-		mas_work_F[i] = ((Sum1_SN_F * Sum1_SN_F + Sum2_SN_F * Sum2_SN_F) / (CountTest)); // Вроде работает для синусов
-																	 
-																	 //mas_work_F[i] = 20*log10(sqrt(Sum1_SN_F * Sum1_SN_F + Sum2_SN_F * Sum2_SN_F)) / (CountTest / 2); // Это хорошо для шума
-		//mas_work_F[i] = 20 * log10(sqrt(Sum1_SN_F * Sum1_SN_F + Sum2_SN_F * Sum2_SN_F)) / (CountTest / 2); //
-		//mas_work_F[i] = (sqrt(Sum1_SN_F * Sum1_SN_F + Sum2_SN_F * Sum2_SN_F) / (CountTest / 2)); // Старое
-
-		DFT_SN_F[sr_F] = mas_work_F[i];
-		Signal8_dF << DFT_SN_F[sr_F] << "		" << sr_F << "\n";
-		sr_F++;*/
 
 		FCHFiltr8[i] = atan(Sum2_SN_F / Sum1_SN_F); // ФЧХ
 		FCHtFiltr8 << FCHFiltr8[i] << "		" << i << "\n";
