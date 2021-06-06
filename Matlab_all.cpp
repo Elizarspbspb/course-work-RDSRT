@@ -1,7 +1,7 @@
 ﻿#include "Signal_Test.h"
 #include "Matlab_all.h"
 #include <iostream>
-#include <cmath>                                  // для функции exp
+#include <cmath>                                  
 #include <fstream>
 
 #include <iostream>
@@ -66,7 +66,6 @@ int main(int, const char* const [])
 	std::cout << std::endl << " Signal " << std::endl;
 	for (int i = 0; i < Count; i++)
 	{
-		//Signal[i] = Noise[i] + Signalsin1[i] + Signalsin2[i] + Signalsin3[i];
 		Signal[i] = Signalsin1[i] + Signalsin2[i] + Signalsin3[i];
 		signal << Signal[i] << "		" << i << "\n";
 	}
@@ -79,13 +78,11 @@ int main(int, const char* const [])
 	std::ofstream dftsn("DFTSignal.txt", std::ios_base::out);
 	std::ofstream FCHt("FCH.txt", std::ios_base::out);
 	std::ofstream ACHt("ACH.txt", std::ios_base::out);
-	std::ofstream FCHtlg("FCHLG.txt", std::ios_base::out);
-	std::ofstream ACHtlg("ACHLG.txt", std::ios_base::out);
 	std::cout << std::endl << " DFTSignal " << std::endl;
 	
 	float N_SN = CountTest;
 	float* DFT_SN = new float[Count];
-
+	float* ACH_Modul = new float[Count];
 	float real_SN = 0.0;
 	float mnim_SN = 0.0;
 	float Sum1_SN = 0.0;
@@ -112,25 +109,8 @@ int main(int, const char* const [])
 				Sum1_SN = Sum1_SN + real_SN;
 				Sum2_SN = Sum2_SN + mnim_SN;
 			}
-			param_SN = 2.0 * PI  * i / N_SN;
-			real_SN = Signal[i] * cos(param_SN);
-			mnim_SN = Signal[i] * sin(param_SN);
-
-			//FCH[i] = atan(Sum2_SN / Sum1_SN); // ФЧХ
-			FCH[i] = atan(mnim_SN / real_SN); // ФЧХ
-			FCHt << FCH[i] << "		" << i << "\n";
-			//FCHt << FCH[i] << "		" << i << "\n";
-
-			ACH[i] = (sqrt(real_SN * real_SN + mnim_SN * mnim_SN)); // АЧХ
-			ACHt << ACH[i] << "		" << i << "\n";
-			//ACHt << ACH[i] << "		" << i << "\n";
-
-			mas_work[i] = ((Sum1_SN * Sum1_SN + Sum2_SN * Sum2_SN)); // Спектр
+			mas_work[i] = (sqrt(Sum1_SN * Sum1_SN + Sum2_SN * Sum2_SN)); // Спектр
 			dftsn << mas_work[i] << "		" << i << "\n";
-
-			ACHlg[i] = 20 * log10(mas_int[i]);
-			ACHtlg << ACHlg[i] << "		" << i << "\n";
-
 			power = power + ((Sum1_SN * Sum1_SN + Sum2_SN * Sum2_SN) / (CountTest)); // мощность
 		}
 	std::cout << std::endl << " Power signal = " << power << std::endl;
@@ -145,6 +125,7 @@ int main(int, const char* const [])
 
 	float N_SNN = CountTest;
 	float* DFT_SNN = new float[Count];
+	float* ACH_Noise = new float[Count];
 
 	float real_SNN = 0.0;
 	float mnim_SNN = 0.0;
@@ -166,12 +147,8 @@ int main(int, const char* const [])
 			real_SNN = mas_intN[j] * cos(param_SNN);
 			mnim_SNN = mas_intN[j] * sin(param_SNN);
 			Sum1_SNN = Sum1_SNN + real_SNN;
-			Sum2_SNN = Sum2_SNN - mnim_SNN;
+			Sum2_SNN = Sum2_SNN + mnim_SNN;
 		}
-		param_SN = 2.0 * PI * i / N_SN;
-		real_SN = Noise[i] * cos(param_SN);
-		mnim_SN = Noise[i] * sin(param_SN);
-
 		mas_workN[i] = ((Sum1_SNN * Sum1_SNN + Sum2_SNN * Sum2_SNN));
 		mas_workN[i] = 20 * log10(sqrt(mas_workN[i])) / CountTest;
 		dftnoise << mas_workN[i] << "		" << i << "\n";
@@ -195,7 +172,6 @@ int main(int, const char* const [])
 		z1 = filtr[i];
 		exit[i] = sum1;
 		flag1 = 1;
-		//std::cout << "Si" << "\t\tZ1" << "\t\tZ2" << "\t\tSum1" << "\t\tSum2" << "\t\tZ3" << "\t\tZ4" << endl << Signal[i] << "\t\t" << z1 << "\t" << z2 << "\t" << sum1 << "\t" << z3 + sum1 + sum2 << "\t" << z3 + sum1 + sum2 << "\t" << sum2 << endl << endl;
 	}
 	std::cout << std::endl;
 
@@ -222,8 +198,6 @@ int main(int, const char* const [])
 	//////////////////////////////////  DFT _FILTR   /////////////////////////////////////////
 	std::ofstream FCHtFiltr("FCHFiltr.txt", std::ios_base::out);
 	std::ofstream ACHtFiltr("ACHFiltr.txt", std::ios_base::out);
-	std::ofstream FCHtlgFiltr("FCHLGFiltr.txt", std::ios_base::out);
-	std::ofstream ACHtlgFiltr("ACHLGFiltr.txt", std::ios_base::out);
 	std::ofstream filtr1("Filtr.txt", std::ios_base::out);
 	float* FCHFiltr = new float[Count];
 	float* ACHFiltr = new float[Count];
@@ -257,23 +231,15 @@ int main(int, const char* const [])
 			Sum1_SN_F = Sum1_SN_F + real_SN_F;
 			Sum2_SN_F = Sum2_SN_F + mnim_SN_F;
 		}
-		param_SN_F = 2.0 * PI * i / N_SN_F;
-		real_SN_F = exit[i] * cos(param_SN_F);
-		mnim_SN_F = exit[i] * sin(param_SN_F);
 
-		FCHFiltr[i] = atan(mnim_SN_F / real_SN_F); // ФЧХ
-		//FCHtFiltr << FCHFiltr[i] << "		" << i << "\n";
+		FCHFiltr[i] = atan(Sum2_SN_F / Sum1_SN_F); // ФХ
 		FCHtFiltr << FCHFiltr[i] << "		" << i << "\n";
 
-		ACHFiltr[i] = (sqrt(real_SN_F * real_SN_F + mnim_SN_F * mnim_SN_F)); // АЧХ
-		//ACHtFiltr << ACHFiltr[i] << "		" << i << "\n";
+		ACHFiltr[i] = ((Sum1_SN_F)); // АХ
 		ACHtFiltr << ACHFiltr[i] << "		" << i << "\n";
 
-		mas_work_F[i] = ((Sum1_SN_F * Sum1_SN_F + Sum2_SN_F * Sum2_SN_F)); // Спектр
+		mas_work_F[i] = (sqrt(Sum1_SN_F * Sum1_SN_F + Sum2_SN_F * Sum2_SN_F)); // Спектр
 		filtr1 << mas_work_F[i] << "		" << i << "\n";
-
-		ACHlgFiltr[i] = 20 * log10(exit[i]);
-		ACHtlgFiltr << ACHlgFiltr[i] << "		" << i << "\n";
 
 		power = power + ((Sum1_SN_F * Sum1_SN_F + Sum2_SN_F * Sum2_SN_F) / (CountTest)); // мощность
 	}
@@ -283,6 +249,11 @@ int main(int, const char* const [])
 
 
 	std::ofstream filtr_noise("Filtr_Noise.txt", std::ios_base::out);
+	std::ofstream FCHtFiltrNoise("FCHFiltrNoise.txt", std::ios_base::out);
+	std::ofstream ACHtFiltrNoise("ACHFiltrNoise.txt", std::ios_base::out);
+
+	float* FCHFiltrNoise = new float[Count];
+	float* ACHFiltrNoise = new float[Count];
 	float mas_int_FN[CountTest];
 	float mas_work_FN[CountTest];
 
@@ -307,7 +278,7 @@ int main(int, const char* const [])
 			real_SN_FN = exitn[j] * cos(param_SN_FN);
 			mnim_SN_FN = exitn[j] * sin(param_SN_FN);
 			Sum1_SN_FN = Sum1_SN_FN + real_SN_FN;
-			Sum2_SN_FN = Sum2_SN_FN - mnim_SN_FN;
+			Sum2_SN_FN = Sum2_SN_FN + mnim_SN_FN;
 		}
 		mas_work_FN[i] = ((Sum1_SN_FN * Sum1_SN_FN + Sum2_SN_FN * Sum2_SN_FN));
 		mas_work_FN[i] = 20 * log10(sqrt(mas_work_FN[i])) / CountTest;
@@ -373,8 +344,6 @@ int main(int, const char* const [])
 
 	std::ofstream FCHt8("FCH8.txt", std::ios_base::out);
 	std::ofstream ACHt8("ACH8.txt", std::ios_base::out);
-	std::ofstream FCHtlg8("FCHLG8.txt", std::ios_base::out);
-	std::ofstream ACHtlg8("ACHLG8.txt", std::ios_base::out);
 
 	N_SN = CountTest;
 	real_SN = 0.0;
@@ -402,22 +371,8 @@ int main(int, const char* const [])
 				Sum1_SN = Sum1_SN + real_SN;
 				Sum2_SN = Sum2_SN - mnim_SN;
 			}
-
-			param_SN = 2.0 * PI * i / N_SN;
-			real_SN = Signal8[i] * cos(param_SN);
-			mnim_SN = Signal8[i] * sin(param_SN);
-
-			FCH[i] = atan(mnim_SN / real_SN); // ФЧХ
-			FCHt8 << FCH[i] << "		" << i << "\n";
-
-			ACH[i] = (sqrt(real_SN * real_SN + mnim_SN * mnim_SN)); // АЧХ
-			ACHt8 << ACH[i] << "		" << i << "\n";
-
-			mas_work[i] = ((Sum1_SN * Sum1_SN + Sum2_SN * Sum2_SN)); // Спектр
+			mas_work[i] = (sqrt(Sum1_SN * Sum1_SN + Sum2_SN * Sum2_SN)); // Спектр
 			Signal8_d << mas_work[i] << "		" << i << "\n";
-
-			ACHlg[i] = 20 * log10(mas_int[i]);
-			ACHtlg8 << ACHlg[i] << "		" << i << "\n";
 
 			power = power + ((Sum1_SN * Sum1_SN + Sum2_SN * Sum2_SN) / (CountTest)); // мощность
 		}
@@ -449,12 +404,9 @@ int main(int, const char* const [])
 	std::ofstream Signal8_dF("Filtr_SIgnal8.txt", std::ios_base::out);
 	std::ofstream FCHtFiltr8("FCHFiltr8.txt", std::ios_base::out);
 	std::ofstream ACHtFiltr8("ACHFiltr8.txt", std::ios_base::out);
-	std::ofstream FCHtlgFiltr8("FCHLGFiltr8.txt", std::ios_base::out);
-	std::ofstream ACHtlgFiltr8("ACHLGFiltr8.txt", std::ios_base::out);
+
 	float* FCHFiltr8 = new float[Count];
 	float* ACHFiltr8 = new float[Count];
-	float* FCHlgFiltr8 = new float[Count];
-	float* ACHlgFiltr8 = new float[Count];
 
 	N_SN_F = CountTest;
 	real_SN_F = 0.0;
@@ -479,21 +431,19 @@ int main(int, const char* const [])
 			Sum2_SN_F = Sum2_SN_F - mnim_SN_F;
 		}
 
-		FCHFiltr8[i] = atan(Sum2_SN_F / Sum1_SN_F); // ФЧХ
+		FCHFiltr8[i] = atan(Sum2_SN_F / Sum1_SN_F); // ФХ
 		FCHtFiltr8 << FCHFiltr8[i] << "		" << i << "\n";
 
-		ACHFiltr8[i] = (sqrt(Sum1_SN_F * Sum1_SN_F + Sum2_SN_F * Sum2_SN_F)); // АЧХ
+		ACHFiltr8[i] = ((Sum1_SN_F)); // АХ
 		ACHtFiltr8 << ACHFiltr8[i] << "		" << i << "\n";
 
-		mas_work_F[i] = ((Sum1_SN_F * Sum1_SN_F + Sum2_SN_F * Sum2_SN_F)); // Спектр
+		mas_work_F[i] = (sqrt(Sum1_SN_F * Sum1_SN_F + Sum2_SN_F * Sum2_SN_F)); // Спектр
 		Signal8_dF << mas_work_F[i] << "		" << i << "\n";
-
-		ACHlgFiltr8[i] = 20 * log10(exit[i]);
-		ACHtlgFiltr8 << ACHlgFiltr8[i] << "		" << i << "\n";
 
 		power = power + ((Sum1_SN_F * Sum1_SN_F + Sum2_SN_F * Sum2_SN_F) / (CountTest)); // мощность
 	}
 	std::cout << std::endl << " Power signal_8 after filtr = " << power << std::endl;
+
 
 
 
@@ -510,18 +460,20 @@ int main(int, const char* const [])
 	std::cout << summ2 << " " << endl;
 	summ2 = summ2 - summ1;
 	float SNR = 0;
-	SNR = 20 * log10(summ1/ summ2);
+	SNR = 20 * log10((summ1/summ2)* (summ1 / summ2));
 	std::cout << "SNR16 = " << SNR << " " << endl;
 
 	summ2 = 0;
 	for (int i = 0; i < Count; i++)
+	{
 		summ2 = summ2 + abs(Signal8[i]);
+	}
 	summ2 = summ2 / Count;
 	std::cout << summ1 << " = ";
 	std::cout << summ2 << " " << endl;
 	summ2 = summ2 - summ1;
 	SNR = 0;
-	SNR = 20 * log10(summ1 / summ2);
+	SNR = 20 * log10((summ1 / summ2) * (summ1 / summ2));
 	std::cout << "SNR8 = " << SNR << " " << endl;
 
 

@@ -43,7 +43,5 @@ void Noise_Test(double Amplitude, double Noise[], int Count)
         } while (randNum >= 1.0 || randNum == 0.0);
 
         Noise[i0] = high;
-        //Noise[i0] = (float(rand())) / RAND_MAX - (float(rand())) / RAND_MAX;
-        //Noise[i0] = 2 * ((rand() / ((double)RAND_MAX)) - 0.5);
     }
 }
