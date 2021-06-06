@@ -73,14 +73,22 @@ int main(int, const char* const [])
 	//////////////////////   unit test    ///////////////////////////////////
 
 	std::ifstream test("Test_Signal.txt", std::ios_base::in);
+	std::ifstream test_noise("Test_Noise.txt", std::ios_base::in);
 	float* Test = new float[Count];
+	float* Test_Noise = new float[Count];
 	std::cout << std::endl << " Test input signal " << std::endl;
 	for (int i = 0; i < Count; i++)
 	{
 		test >> Test[i];
+		test_noise >> Test_Noise[i];
 		if (Test[i] != Signal[i])
 		{
-			std::cout << std::endl << " ERROR signal " << i << std::endl;
+			std::cout << std::endl << " ERROR signal sin " << i << std::endl;
+			break;
+		}
+		if (Test_Noise[i] != Noise[i])
+		{
+			std::cout << std::endl << " ERROR noise " << i << std::endl;
 			break;
 		}
 	}
