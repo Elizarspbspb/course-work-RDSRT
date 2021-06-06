@@ -59,7 +59,7 @@ int main(int, const char* const [])
 	}
 
 
-	////////////////////////////////////////////////////////////////////////////
+	//////////////////////////  SIGNAL   //////////////////////////////////
 
 	std::ofstream signal("SIGNAL.txt", std::ios_base::out);
 	float* Signal = new float[Count];
@@ -69,6 +69,29 @@ int main(int, const char* const [])
 		Signal[i] = Signalsin1[i] + Signalsin2[i] + Signalsin3[i];
 		signal << Signal[i] << "		" << i << "\n";
 	}
+
+	//////////////////////   unit test    ///////////////////////////////////
+
+	std::ifstream test("Test_Signal.txt", std::ios_base::in);
+	float* Test = new float[Count];
+	std::cout << std::endl << " Test input signal " << std::endl;
+	for (int i = 0; i < Count; i++)
+	{
+		test >> Test[i];
+		if (Test[i] != Signal[i])
+		{
+			std::cout << std::endl << " ERROR signal " << i << std::endl;
+			break;
+		}
+	}
+
+
+
+
+
+
+
+	//////////////////////   DFT    ///////////////////////////////////
 
 	const int CountTest = 1080;
 
